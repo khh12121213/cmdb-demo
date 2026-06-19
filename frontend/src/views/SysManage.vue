@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import api from '@/api/index.js'
+import { sysApi } from '../api'
 
 const items = ref([])
 const total = ref(0)
@@ -57,7 +57,7 @@ const emptyForm = () => ({ id: 0, sys_code: '', sys_name: '', env_code: '', dev_
 const form = reactive(emptyForm())
 
 async function fetch() {
-  const r = await api.get('/api/v1/admin/sys/list', { params: { page: page.value, size: size.value, env_code: filters.env_code } })
+  const r = await sysApi.list({ page: page.value, size: size.value, env_code: filters.env_code })
   items.value = r.items; total.value = r.total
 }
 
@@ -65,12 +65,12 @@ function openAdd() { Object.assign(form, emptyForm()); visible.value = true }
 function openEdit(row) { Object.assign(form, row); visible.value = true }
 
 async function doSave() {
-  await api.post('/api/v1/admin/sys/save', form)
+  await sysApi.save(form)
   visible.value = false; fetch()
 }
 
 async function doRemove(id) {
-  await api.put('/api/v1/admin/sys/remove', null, { params: { id } })
+  await sysApi.remove(id)
   fetch()
 }
 
