@@ -59,6 +59,7 @@
           <el-col :span="8"><el-form-item label="状态"><el-switch v-model="form.status" :active-value="1" :inactive-value="0" /></el-form-item></el-col>
           <el-col :span="8"><el-form-item label="TSF部署组ID"><el-input v-model="form.deploy_group_id" placeholder="TSF平台ID" /></el-form-item></el-col>
         </el-row>
+        <el-form-item label="JVM参数"><el-input v-model="form.jvm_opts" type="textarea" :rows="2" placeholder="-Xms2g -Xmx4g" /></el-form-item>
 
         <el-divider content-position="left">虚拟机部署配置</el-divider>
         <el-row :gutter="16">
@@ -71,7 +72,6 @@
           <el-col :span="12"><el-form-item label="执行账号"><el-input v-model="form.deploy_user" placeholder="appdeploy" /></el-form-item></el-col>
         </el-row>
         <el-form-item label="健康检查"><el-input v-model="form.health_check_url" placeholder="http://127.0.0.1:8080/health" /></el-form-item>
-        <el-form-item label="JVM参数"><el-input v-model="form.jvm_opts" type="textarea" :rows="2" /></el-form-item>
         <el-row :gutter="16">
           <el-col :span="12"><el-form-item label="启动脚本"><el-input v-model="form.start_script" /></el-form-item></el-col>
           <el-col :span="12"><el-form-item label="停止脚本"><el-input v-model="form.stop_script" /></el-form-item></el-col>
@@ -89,6 +89,7 @@
               <el-col :span="8"><el-form-item label="Memory Limit"><el-input v-model="form.mem_limit" placeholder="2048Mi" /></el-form-item></el-col>
               <el-col :span="8"><el-form-item label="灰度流量权重"><el-input v-model="form.tsf_traffic_weight" placeholder="0" /></el-form-item></el-col>
             </el-row>
+            <el-form-item label="更新策略"><el-radio-group v-model="form.update_type"><el-radio :value="0">立即更新</el-radio><el-radio :value="1">滚动更新</el-radio></el-radio-group></el-form-item>
           </el-collapse-item>
           <el-collapse-item title="传统中间件配置" name="middleware">
             <el-row :gutter="16">
@@ -118,7 +119,7 @@ const page = ref(1)
 const total = ref(0)
 const size = 20
 const visible = ref(false)
-const emptyForm = () => ({ env_code: '', app_code: '', cluster_id: 0, group_code: 'default-group', group_name: '默认分组', group_type: 'fixed', status: 1, deploy_group_id: '', package_type: '', artifact_file_name: '', deploy_path: '', deploy_user: '', deploy_strategy: 'full', unpack_flag: 'Y', jvm_opts: '', health_check_url: '', start_script: '', stop_script: '', cpu_request: '', cpu_limit: '', mem_request: '', mem_limit: '', replicas: 0, tsf_traffic_weight: 0, middleware_domain: '', middleware_cluster_name: '', admin_url: '' })
+const emptyForm = () => ({ env_code: '', app_code: '', cluster_id: 0, group_code: 'default-group', group_name: '默认分组', group_type: 'fixed', status: 1, deploy_group_id: '', package_type: '', artifact_file_name: '', deploy_path: '', deploy_user: '', deploy_strategy: 'full', unpack_flag: 'Y', jvm_opts: '', health_check_url: '', start_script: '', stop_script: '', cpu_request: '', cpu_limit: '', mem_request: '', mem_limit: '', replicas: 0, tsf_traffic_weight: 0, update_type: 0, middleware_domain: '', middleware_cluster_name: '', admin_url: '' })
 const form = reactive(emptyForm())
 const filterEnv = ref('')
 const filterApp = ref('')
@@ -141,6 +142,7 @@ async function doSave() {
   form.status = Number(form.status)
   form.replicas = Number(form.replicas) || 0
   form.tsf_traffic_weight = Number(form.tsf_traffic_weight) || 0
+  form.update_type = Number(form.update_type)
   await groupApi.save(form)
   ElMessage.success('保存成功')
   visible.value = false

@@ -119,7 +119,7 @@ async def save_deploy_group(db: AsyncSession, data: dict) -> AppDeployGroup:
               "artifact_file_name", "deploy_path", "deploy_strategy", "unpack_flag",
               "jvm_opts", "health_check_url", "start_script", "stop_script",
               "cpu_request", "cpu_limit", "mem_request", "mem_limit", "replicas",
-              "tsf_traffic_weight", "middleware_domain", "middleware_cluster_name",
+              "tsf_traffic_weight", "update_type", "middleware_domain", "middleware_cluster_name",
               "admin_url", "package_type"]
     for f in fields:
         if f in data:

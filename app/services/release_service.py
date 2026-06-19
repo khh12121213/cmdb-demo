@@ -204,6 +204,7 @@ async def get_deploy_target(db: AsyncSession, env_code: str, app_code: str,
             "mem_limit": group.mem_limit,
             "replicas": group.replicas,
             "tsf_traffic_weight": group.tsf_traffic_weight,
+            "update_type": group.update_type,
         }
 
     return result

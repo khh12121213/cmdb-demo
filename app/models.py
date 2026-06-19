@@ -78,6 +78,7 @@ class AppDeployGroup(Base):
     mem_limit = Column(String(32), default="")
     replicas = Column(Integer, default=0)
     tsf_traffic_weight = Column(Integer, default=0)
+    update_type = Column(Integer, default=0, comment="0立即更新 1滚动更新")
 
     # 传统中间件字段
     middleware_domain = Column(String(128), default="")
