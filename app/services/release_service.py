@@ -176,15 +176,23 @@ async def get_deploy_target(db: AsyncSession, env_code: str, app_code: str,
     }
 
     if group.group_type == "fixed":
-        result["hosts"] = [
+        result["instances"] = [
             {
                 "instance_id": inst.id,
                 "instance_ip": inst.instance_ip,
-                "bk_host_id": inst.bk_host_id,
+                "ssh_port": inst.ssh_port,
+                "instance_status": inst.instance_status,
                 "bk_biz_id": inst.bk_biz_id,
+                "bk_host_id": inst.bk_host_id,
                 "bk_cloud_id": inst.bk_cloud_id,
+                "bk_module_id": inst.bk_module_id,
                 "bk_inner_ip": inst.bk_inner_ip,
                 "instance_tags": inst.instance_tags,
+                "deploy_user": inst.deploy_user,
+                "deploy_path": inst.deploy_path,
+                "health_check_url": inst.health_check_url,
+                "start_script": inst.start_script,
+                "stop_script": inst.stop_script,
             }
             for inst in instances
         ]

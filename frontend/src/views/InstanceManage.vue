@@ -19,7 +19,8 @@
         <el-table-column prop="bk_host_id" label="蓝鲸主机ID" width="120" />
         <el-table-column prop="bk_cloud_id" label="云区域" width="80" />
         <el-table-column prop="bk_inner_ip" label="蓝鲸IP" width="150" />
-        <el-table-column prop="instance_tags" label="标签" width="120" />
+        <el-table-column prop="instance_tags" label="标签" width="90" />
+        <el-table-column prop="deploy_user" label="发布账号" width="100" show-overflow-tooltip />
         <el-table-column prop="instance_status" label="状态" width="100">
           <template #default="{row}">
             <el-switch :model-value="row.instance_status===1" @change="(v)=>toggleStatus(row.id, v?1:0)"
@@ -35,12 +36,14 @@
       <el-pagination style="margin-top:12px" v-model:current-page="page" :total="total" :page-size="size" @current-change="fetch" layout="total,prev,pager,next" />
     </el-card>
 
-    <el-dialog :title="form.id?'编辑主机':'新增主机'" v-model="visible" width="700px">
+    <el-dialog :title="form.id?'编辑主机':'新增主机'" v-model="visible" width="800px">
       <el-form :model="form" label-width="120px">
         <el-row :gutter="16">
-          <el-col :span="12"><el-form-item label="部署组ID"><el-input v-model="form.deploy_group_id" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item label="内网IP" required><el-input v-model="form.instance_ip" /></el-form-item></el-col>
+          <el-col :span="8"><el-form-item label="部署组ID"><el-input v-model="form.deploy_group_id" /></el-form-item></el-col>
+          <el-col :span="8"><el-form-item label="内网IP" required><el-input v-model="form.instance_ip" /></el-form-item></el-col>
+          <el-col :span="8"><el-form-item label="SSH端口"><el-input v-model="form.ssh_port" placeholder="22" /></el-form-item></el-col>
         </el-row>
+        <el-form-item label="状态"><el-switch v-model="form.instance_status" :active-value="1" :inactive-value="0" active-text="正常" inactive-text="维护禁用" /></el-form-item>
         <el-divider content-position="left">蓝鲸五元组</el-divider>
         <el-row :gutter="16">
           <el-col :span="8"><el-form-item label="业务ID"><el-input v-model="form.bk_biz_id" /></el-form-item></el-col>
@@ -51,7 +54,20 @@
           <el-col :span="12"><el-form-item label="模块ID"><el-input v-model="form.bk_module_id" /></el-form-item></el-col>
           <el-col :span="12"><el-form-item label="蓝鲸IP"><el-input v-model="form.bk_inner_ip" /></el-form-item></el-col>
         </el-row>
-        <el-form-item label="标签"><el-input v-model="form.instance_tags" placeholder="group-a" /></el-form-item>
+        <el-form-item label="分批标签"><el-input v-model="form.instance_tags" placeholder="group-a" /></el-form-item>
+        <el-collapse style="margin-bottom:12px">
+          <el-collapse-item title="单机差异化覆盖配置（留空则继承部署组默认值）" name="override">
+            <el-row :gutter="16">
+              <el-col :span="12"><el-form-item label="部署路径"><el-input v-model="form.deploy_path" placeholder="/data/app/loan-core" /></el-form-item></el-col>
+              <el-col :span="12"><el-form-item label="发布账号"><el-input v-model="form.deploy_user" placeholder="appdeploy" /></el-form-item></el-col>
+            </el-row>
+            <el-form-item label="健康检查"><el-input v-model="form.health_check_url" placeholder="http://127.0.0.1:8080/health" /></el-form-item>
+            <el-row :gutter="16">
+              <el-col :span="12"><el-form-item label="启动脚本"><el-input v-model="form.start_script" /></el-form-item></el-col>
+              <el-col :span="12"><el-form-item label="停止脚本"><el-input v-model="form.stop_script" /></el-form-item></el-col>
+            </el-row>
+          </el-collapse-item>
+        </el-collapse>
       </el-form>
       <template #footer>
         <el-button @click="visible=false">取消</el-button>
@@ -87,7 +103,7 @@ const page = ref(1)
 const total = ref(0)
 const size = 50
 const visible = ref(false)
-const emptyForm = () => ({ deploy_group_id: 0, instance_ip: '', bk_biz_id: 0, bk_host_id: 0, bk_cloud_id: 0, bk_module_id: 0, bk_inner_ip: '', instance_tags: '' })
+const emptyForm = () => ({ deploy_group_id: 0, instance_ip: '', ssh_port: 22, instance_status: 1, bk_biz_id: 0, bk_host_id: 0, bk_cloud_id: 0, bk_module_id: 0, bk_inner_ip: '', instance_tags: '', deploy_user: '', deploy_path: '', health_check_url: '', start_script: '', stop_script: '' })
 const form = reactive(emptyForm())
 const filterGroupId = ref('')
 const selectedIds = ref([])

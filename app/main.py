@@ -1,6 +1,9 @@
 import contextlib
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
 from app.database import engine, Base
 from app.routers import cd_router, admin_router
 
@@ -47,3 +50,17 @@ async def ready():
         return {"status": "ok", "db": "connected"}
     except Exception as e:
         return {"status": "fail", "db": str(e)}
+
+
+# 生产模式托管前端静态文件
+frontend_dist = os.path.join(os.path.dirname(__file__), "..", "frontend", "dist")
+if os.path.isdir(frontend_dist):
+    app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str = ""):
+        """SPA fallback：所有非 /api 路径返回 index.html"""
+        file_path = os.path.join(frontend_dist, full_path) if full_path else ""
+        if full_path and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(frontend_dist, "index.html"))

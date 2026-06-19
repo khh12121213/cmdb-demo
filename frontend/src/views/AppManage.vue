@@ -54,9 +54,19 @@
             <el-form-item label="服务端口"><el-input v-model="form.server_port" placeholder="8080" /></el-form-item>
           </el-col>
         </el-row>
+        <el-row :gutter="16">
+          <el-col :span="8">
+            <el-form-item label="监控端口"><el-input v-model="form.management_port" placeholder="8081" /></el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="蓝鲸业务ID"><el-input v-model="form.default_bk_biz_id" placeholder="200" /></el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="进程名"><el-input v-model="form.proc_name" /></el-form-item>
+          </el-col>
+        </el-row>
         <el-form-item label="代码仓库"><el-input v-model="form.repo_url" /></el-form-item>
         <el-form-item label="制品库"><el-input v-model="form.artifact_repo" /></el-form-item>
-        <el-form-item label="进程名"><el-input v-model="form.proc_name" /></el-form-item>
         <el-form-item label="JVM参数"><el-input v-model="form.base_jvm_opts" type="textarea" :rows="2" /></el-form-item>
         <el-form-item label="日志目录"><el-input v-model="form.log_base_dir" /></el-form-item>
       </el-form>
@@ -79,11 +89,11 @@ const page = ref(1)
 const total = ref(0)
 const size = 20
 const visible = ref(false)
-const form = reactive({ app_code: '', app_name: '', app_type: 'springboot', server_port: 8080, repo_url: '', artifact_repo: '', owner: '', proc_name: '', base_jvm_opts: '', log_base_dir: '' })
+const form = reactive({ app_code: '', app_name: '', app_type: 'springboot', server_port: 8080, management_port: '', default_bk_biz_id: '', repo_url: '', artifact_repo: '', owner: '', proc_name: '', base_jvm_opts: '', log_base_dir: '' })
 const appTypes = ['springboot', 'nginx', 'tongweb', 'weblogic', 'tsf-service']
 
 function openDialog(row) {
-  Object.assign(form, row ? { ...row } : { app_code: '', app_name: '', app_type: 'springboot', server_port: 8080, repo_url: '', artifact_repo: '', owner: '', proc_name: '', base_jvm_opts: '', log_base_dir: '' })
+  Object.assign(form, row ? { ...row } : { app_code: '', app_name: '', app_type: 'springboot', server_port: 8080, management_port: '', default_bk_biz_id: '', repo_url: '', artifact_repo: '', owner: '', proc_name: '', base_jvm_opts: '', log_base_dir: '' })
   visible.value = true
 }
 

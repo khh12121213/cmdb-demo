@@ -72,6 +72,7 @@
         <el-form-item v-if="form.deploy_mode==='elastic'" label="TSF集群ID"><el-input v-model="form.tsf_cluster_id" /></el-form-item>
         <el-form-item v-if="form.deploy_mode==='elastic'" label="命名空间"><el-input v-model="form.namespace" /></el-form-item>
         <el-form-item label="灰度标签"><el-input v-model="form.labels" placeholder="group-a,group-b" /></el-form-item>
+        <el-form-item label="状态"><el-switch v-model="form.status" :active-value="1" :inactive-value="0" active-text="允许发布" inactive-text="禁用" /></el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="visible=false">取消</el-button>
@@ -82,7 +83,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { clusterApi } from '../api'
 
@@ -92,12 +93,13 @@ const page = ref(1)
 const total = ref(0)
 const size = 20
 const visible = ref(false)
-const form = ref({})
+const emptyForm = () => ({ env_code: '', app_code: '', cluster_code: '', cluster_name: '', deploy_mode: 'fixed', tsf_cluster_id: '', namespace: '', labels: '', status: 1 })
+const form = reactive(emptyForm())
 const filterEnv = ref('')
 const filterApp = ref('')
 
 function openDialog(row) {
-  form.value = row ? { ...row } : { env_code: '', app_code: '', cluster_code: '', cluster_name: '', deploy_mode: 'fixed' }
+  Object.assign(form, row ? { ...row } : emptyForm())
   visible.value = true
 }
 
@@ -110,7 +112,8 @@ async function fetch() {
 }
 
 async function doSave() {
-  await clusterApi.save(form.value)
+  form.status = Number(form.status)
+  await clusterApi.save(form)
   ElMessage.success('保存成功')
   visible.value = false
   fetch()
