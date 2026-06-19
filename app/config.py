@@ -17,5 +17,4 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "")
 REDIS_DB = int(os.getenv("REDIS_DB", "0"))
 
-AES_SECRET_KEY = os.getenv("AES_SECRET_KEY", "demo-cmdb-aes-key-32byte-ok!!")
 PIPELINE_TOKEN_PREFIX = os.getenv("PIPELINE_TOKEN_PREFIX", "bank-cicd-token")

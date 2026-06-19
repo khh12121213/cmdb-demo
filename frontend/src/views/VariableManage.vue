@@ -17,24 +17,13 @@
         <el-table-column prop="env_code" label="环境" width="80" />
         <el-table-column prop="app_code" label="应用" width="110" />
         <el-table-column prop="var_key" label="变量名" width="160" />
-        <el-table-column prop="var_value" label="变量值" min-width="200" show-overflow-tooltip>
-          <template #default="{row}">
-            <span v-if="row.is_secret===1" style="color:#909399;font-style:italic">🔒 加密存储</span>
-            <span v-else>{{ row.var_value }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="var_value" label="变量值" min-width="200" show-overflow-tooltip />
         <el-table-column label="层级" width="120">
           <template #default="{row}">
             <el-tag v-if="row.group_code" type="warning" size="small">部署组级</el-tag>
             <el-tag v-else-if="row.cluster_code" type="primary" size="small">集群级</el-tag>
             <el-tag v-else-if="row.instance_id>0" type="danger" size="small">主机级</el-tag>
             <el-tag v-else size="small">应用级</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="敏感" width="70">
-          <template #default="{row}">
-            <span v-if="row.is_secret===1">🔒是</span>
-            <span v-else>否</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="140">
@@ -55,11 +44,7 @@
         <el-row :gutter="16">
           <el-col :span="8"><el-form-item label="环境" required><el-input v-model="form.env_code" /></el-form-item></el-col>
           <el-col :span="8"><el-form-item label="应用" required><el-input v-model="form.app_code" /></el-form-item></el-col>
-          <el-col :span="8">
-            <el-form-item label="是否敏感">
-              <el-switch v-model="form.is_secret" :active-value="1" :inactive-value="0" />
-            </el-form-item>
-          </el-col>
+          <el-col :span="8"><el-form-item label="主机ID"><el-input v-model="form.instance_id" /></el-form-item></el-col>
         </el-row>
         <el-row :gutter="16">
           <el-col :span="8"><el-form-item label="集群编码"><el-input v-model="form.cluster_code" /></el-form-item></el-col>
@@ -68,8 +53,7 @@
         </el-row>
         <el-form-item label="变量名" required><el-input v-model="form.var_key" placeholder="DB_URL / APP_ENV / ..." /></el-form-item>
         <el-form-item label="变量值" required>
-          <el-input v-model="form.var_value" type="textarea" :rows="2" :type2="form.is_secret?'password':'text'"
-            :placeholder="form.is_secret?'🔒 将AES加密存储':''" />
+          <el-input v-model="form.var_value" type="textarea" :rows="2" />
         </el-form-item>
         <el-form-item label="备注"><el-input v-model="form.remark" /></el-form-item>
       </el-form>
@@ -89,7 +73,7 @@ import { variableApi } from '../api'
 const tableData = ref([])
 const loading = ref(false)
 const visible = ref(false)
-const emptyForm = () => ({ env_code: '', app_code: '', cluster_code: '', group_code: '', instance_id: 0, var_key: '', var_value: '', is_secret: 0, remark: '' })
+const emptyForm = () => ({ env_code: '', app_code: '', cluster_code: '', group_code: '', instance_id: 0, var_key: '', var_value: '', remark: '' })
 const form = reactive(emptyForm())
 const filterEnv = ref('')
 const filterApp = ref('')
@@ -108,7 +92,6 @@ async function fetch() {
 
 async function doSave() {
   form.instance_id = Number(form.instance_id) || 0
-  form.is_secret = Number(form.is_secret)
   await variableApi.save(form)
   ElMessage.success('保存成功')
   visible.value = false

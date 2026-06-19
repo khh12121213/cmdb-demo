@@ -5,7 +5,6 @@ from app.models import (
     ClusterInstance, CicdVariable,
     AppDeployGroupRelease, ClusterInstanceRelease, SysAuditLog
 )
-from app.utils.crypto import decrypt_value
 
 
 # ===== 环境管理 =====
@@ -126,8 +125,7 @@ async def save_deploy_group(db: AsyncSession, data: dict) -> AppDeployGroup:
         if f in data:
             setattr(g, f, data[f])
     if data.get("deploy_user"):
-        from app.utils.crypto import encrypt_value
-        g.deploy_user = encrypt_value(data["deploy_user"])
+        g.deploy_user = data["deploy_user"]
     return g
 
 
@@ -172,7 +170,7 @@ async def bind_instance_group(db: AsyncSession, instance_ids: list[int], group_i
 
 # ===== 变量管理 =====
 async def get_variables(db: AsyncSession, env_code: str = "", app_code: str = "",
-                        page: int = 1, size: int = 50, show_secret: bool = False) -> dict:
+                        page: int = 1, size: int = 50) -> dict:
     stmt = select(CicdVariable).where(CicdVariable.is_deleted == 0)
     if env_code:
         stmt = stmt.where(CicdVariable.env_code == env_code)
@@ -185,17 +183,11 @@ async def get_variables(db: AsyncSession, env_code: str = "", app_code: str = ""
     items = []
     for r in rows:
         d = {c.name: getattr(r, c.name) for c in r.__table__.columns}
-        if not show_secret and r.is_secret == 1:
-            d["var_value"] = "******"
-            d["encrypt_value"] = "******"
-        else:
-            d["var_value"] = decrypt_value(r.encrypt_value) if r.is_secret else r.var_value
         items.append(d)
     return {"total": total, "items": items}
 
 
 async def save_variable(db: AsyncSession, data: dict) -> CicdVariable:
-    from app.utils.crypto import encrypt_value
     if data.get("id"):
         v = (await db.execute(select(CicdVariable).where(CicdVariable.id == data["id"]))).scalar_one_or_none()
     else:
@@ -204,14 +196,7 @@ async def save_variable(db: AsyncSession, data: dict) -> CicdVariable:
     for f in ["env_code", "app_code", "cluster_code", "group_code", "instance_id", "var_key", "remark"]:
         if f in data:
             setattr(v, f, data[f])
-    is_secret = int(data.get("is_secret", 0))
-    v.is_secret = is_secret
-    if is_secret:
-        v.encrypt_value = encrypt_value(data.get("var_value", ""))
-        v.var_value = ""
-    else:
-        v.var_value = data.get("var_value", "")
-        v.encrypt_value = None
+    v.var_value = data.get("var_value", "")
     return v
 
 

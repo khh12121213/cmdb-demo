@@ -6,7 +6,6 @@ from app.models import (
     AppDeployGroup, ClusterInstance, CicdVariable,
     AppDeployGroupRelease, ClusterInstanceRelease, SysAuditLog
 )
-from app.utils.crypto import encrypt_value, decrypt_value
 from app.utils.redis_lock import acquire_lock as redis_acquire_lock, release_lock as redis_release_lock
 
 
@@ -63,7 +62,7 @@ async def get_merged_variables(db: AsyncSession, env_code: str, app_code: str,
 
         existing_scope = _var_scope(merged.get(f"__scope_{var.var_key}__", 0))
         if scope >= existing_scope:
-            val = decrypt_value(var.encrypt_value) if var.is_secret else var.var_value
+            val = var.var_value
             merged[var.var_key] = val
             merged[f"__scope_{var.var_key}__"] = scope
 
@@ -156,7 +155,7 @@ async def get_deploy_target(db: AsyncSession, env_code: str, app_code: str,
     variables = await get_merged_variables(db, env_code, app_code, cluster_code, group_code)
 
     # 解密部署账号
-    deploy_user = decrypt_value(group.deploy_user) if group.deploy_user else ""
+    deploy_user = group.deploy_user or ""
 
     result = {
         "env_code": env_code,

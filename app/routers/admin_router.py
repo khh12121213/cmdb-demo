@@ -109,8 +109,8 @@ async def instance_bind_group(ids: list[int], group_id: int, db: AsyncSession = 
 # ===== 变量管理 =====
 @router.get("/variable/list")
 async def variable_list(env_code: str = "", app_code: str = "", page: int = 1, size: int = 50,
-                        show_secret: bool = False, db: AsyncSession = Depends(get_db)):
-    return await svc.get_variables(db, env_code, app_code, page, size, show_secret)
+                        db: AsyncSession = Depends(get_db)):
+    return await svc.get_variables(db, env_code, app_code, page, size)
 
 @router.post("/variable/save")
 async def variable_save(data: dict, db: AsyncSession = Depends(get_db)):

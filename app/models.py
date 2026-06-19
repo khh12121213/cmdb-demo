@@ -127,9 +127,7 @@ class CicdVariable(Base):
     group_code = Column(String(64), default="")
     instance_id = Column(BigInteger, default=0)
     var_key = Column(String(128), nullable=False)
-    var_value = Column(Text, comment="明文值")
-    is_secret = Column(Integer, default=0, comment="1=加密敏感值 0=明文")
-    encrypt_value = Column(Text, nullable=True, comment="AES加密密文")
+    var_value = Column(Text, comment="变量值")
     remark = Column(String(255), default="")
     is_deleted = Column(Integer, default=0)
 

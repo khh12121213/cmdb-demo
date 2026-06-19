@@ -68,7 +68,7 @@
         </el-row>
         <el-row :gutter="16">
           <el-col :span="12"><el-form-item label="部署路径"><el-input v-model="form.deploy_path" placeholder="/data/app/loan-core" /></el-form-item></el-col>
-          <el-col :span="12"><el-form-item label="执行账号"><el-input v-model="form.deploy_user" placeholder="appdeploy（将加密存储）" /></el-form-item></el-col>
+          <el-col :span="12"><el-form-item label="执行账号"><el-input v-model="form.deploy_user" placeholder="appdeploy" /></el-form-item></el-col>
         </el-row>
         <el-form-item label="健康检查"><el-input v-model="form.health_check_url" placeholder="http://127.0.0.1:8080/health" /></el-form-item>
         <el-form-item label="JVM参数"><el-input v-model="form.jvm_opts" type="textarea" :rows="2" /></el-form-item>
