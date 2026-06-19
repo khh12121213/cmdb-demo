@@ -241,10 +241,8 @@ async def get_audit_logs(db: AsyncSession, page: int = 1, size: int = 20,
 
 
 # ===== 系统管理 =====
-async def get_sys_list(db: AsyncSession, env_code: str = "", page: int = 1, size: int = 20) -> dict:
+async def get_sys_list(db: AsyncSession, page: int = 1, size: int = 20) -> dict:
     stmt = select(SysInfo).where(SysInfo.is_deleted == 0)
-    if env_code:
-        stmt = stmt.where(SysInfo.env_code == env_code)
     count_stmt = select(func.count()).select_from(stmt.subquery())
     total = (await db.execute(count_stmt)).scalar()
     stmt = stmt.offset((page - 1) * size).limit(size)
@@ -258,7 +256,7 @@ async def save_sys(db: AsyncSession, data: dict) -> SysInfo:
     else:
         s = SysInfo()
         db.add(s)
-    for f in ["sys_code", "sys_name", "env_code", "dev_owner", "ops_owner", "remark"]:
+    for f in ["sys_code", "sys_name", "dev_owner", "ops_owner", "remark"]:
         if f in data:
             setattr(s, f, data[f])
     return s

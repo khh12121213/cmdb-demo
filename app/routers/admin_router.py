@@ -23,8 +23,8 @@ async def env_remove(id: int, db: AsyncSession = Depends(get_db)):
 
 # ===== 系统管理 =====
 @router.get("/sys/list")
-async def sys_list(env_code: str = "", page: int = 1, size: int = 20, db: AsyncSession = Depends(get_db)):
-    return await svc.get_sys_list(db, env_code, page, size)
+async def sys_list(page: int = 1, size: int = 20, db: AsyncSession = Depends(get_db)):
+    return await svc.get_sys_list(db, page, size)
 
 @router.post("/sys/save")
 async def sys_save(data: dict, db: AsyncSession = Depends(get_db)):

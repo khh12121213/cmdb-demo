@@ -41,7 +41,6 @@ class SysInfo(Base):
     id = Column(BigInteger, primary_key=True, autoincrement=True, comment="主键")
     sys_code = Column(String(64), nullable=False, comment="系统唯一编码")
     sys_name = Column(String(128), nullable=False, comment="系统名称")
-    env_code = Column(String(32), nullable=False, comment="所属环境")
     dev_owner = Column(String(64), default="", comment="研发负责人")
     ops_owner = Column(String(64), default="", comment="运维负责人")
     remark = Column(String(255), default="", comment="备注")
