@@ -21,7 +21,7 @@ class AppInfo(Base):
     app_code = Column(String(64), nullable=False, comment="应用唯一编码")
     sys_id = Column(BigInteger, default=0, comment="归属系统ID")
     app_name = Column(String(128), nullable=False, comment="应用名称")
-    app_type = Column(String(32), nullable=False, comment="类型: springboot/nginx/tongweb/weblogic/tsf-service")
+    app_type = Column(String(32), nullable=False, comment="类型: springboot/nginx/tongweb/weblogic/tsf-service/docker/bes/websphere/tomcat/mysql/redis/kafka/es/mongodb/zookeeper/other")
     repo_url = Column(String(255), default="")
     artifact_repo = Column(String(255), default="")
     owner = Column(String(64), default="", comment="应用负责人")

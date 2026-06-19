@@ -103,7 +103,7 @@ const size = 20
 const visible = ref(false)
 const sysOptions = ref([])
 const form = reactive({ app_code: '', app_name: '', app_type: 'springboot', sys_id: 0, server_port: 8080, management_port: '', default_bk_biz_id: '', repo_url: '', artifact_repo: '', owner: '', dev_owner: '', ops_owner: '', proc_name: '', base_jvm_opts: '', log_base_dir: '' })
-const appTypes = ['springboot', 'nginx', 'tongweb', 'weblogic', 'tsf-service']
+const appTypes = ['springboot', 'nginx', 'tongweb', 'weblogic', 'tsf-service', 'docker', 'bes', 'websphere', 'tomcat', 'mysql', 'redis', 'kafka', 'es', 'mongodb', 'zookeeper', 'other']
 
 function openDialog(row) {
   Object.assign(form, row ? { ...row } : { app_code: '', app_name: '', app_type: 'springboot', sys_id: 0, server_port: 8080, management_port: '', default_bk_biz_id: '', repo_url: '', artifact_repo: '', owner: '', dev_owner: '', ops_owner: '', proc_name: '', base_jvm_opts: '', log_base_dir: '' })
