@@ -9,7 +9,7 @@
       </template>
       <el-table :data="tableData" v-loading="loading" stripe>
         <el-table-column prop="id" label="ID" width="80" />
-        <el-table-column prop="sys_id" label="系统ID" width="80" />
+        <el-table-column prop="sys_name" label="归属系统" width="140" />
         <el-table-column prop="app_code" label="应用编码" width="140" />
         <el-table-column prop="app_name" label="应用名称" width="160" />
         <el-table-column prop="app_type" label="类型" width="120" />

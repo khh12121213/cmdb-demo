@@ -43,7 +43,7 @@ async def app_list(page: int = 1, size: int = 20, keyword: str = "", db: AsyncSe
 
 @router.get("/app/all")
 async def app_all(db: AsyncSession = Depends(get_db)):
-    return [{"id": r.id, "app_code": r.app_code, "app_name": r.app_name, "app_type": r.app_type, "sys_id": r.sys_id, "owner": r.owner, "dev_owner": r.dev_owner, "ops_owner": r.ops_owner} for r in await svc.get_apps_all(db)]
+    return await svc.get_apps_all(db)
 
 @router.post("/app/save")
 async def app_save(data: dict, db: AsyncSession = Depends(get_db)):

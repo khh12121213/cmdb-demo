@@ -35,14 +35,24 @@ async def save_env(db: AsyncSession, data: dict) -> EnvInfo:
 
 # ===== 应用管理 =====
 async def get_apps(db: AsyncSession, page: int = 1, size: int = 20, keyword: str = "") -> dict:
-    stmt = select(AppInfo).where(AppInfo.is_deleted == 0)
+    stmt = (
+        select(AppInfo, SysInfo.sys_name)
+        .outerjoin(SysInfo, AppInfo.sys_id == SysInfo.id)
+        .where(AppInfo.is_deleted == 0)
+    )
     if keyword:
         stmt = stmt.where(AppInfo.app_code.contains(keyword) | AppInfo.app_name.contains(keyword))
     count_stmt = select(func.count()).select_from(stmt.subquery())
     total = (await db.execute(count_stmt)).scalar()
     stmt = stmt.offset((page - 1) * size).limit(size)
-    rows = (await db.execute(stmt)).scalars().all()
-    return {"total": total, "items": [r for r in rows]}
+    rows = (await db.execute(stmt)).all()
+    return {
+        "total": total,
+        "items": [
+            {**{c.name: getattr(r.AppInfo, c.name) for c in AppInfo.__table__.columns}, "sys_name": r.sys_name or ""}
+            for r in rows
+        ]
+    }
 
 
 async def save_app(db: AsyncSession, data: dict) -> AppInfo:
@@ -61,8 +71,15 @@ async def save_app(db: AsyncSession, data: dict) -> AppInfo:
 
 
 async def get_apps_all(db: AsyncSession) -> list:
-    stmt = select(AppInfo).where(AppInfo.is_deleted == 0)
-    return list((await db.execute(stmt)).scalars().all())
+    stmt = (
+        select(AppInfo, SysInfo.sys_name)
+        .outerjoin(SysInfo, AppInfo.sys_id == SysInfo.id)
+        .where(AppInfo.is_deleted == 0)
+    )
+    return [
+        {**{c.name: getattr(r.AppInfo, c.name) for c in AppInfo.__table__.columns}, "sys_name": r.sys_name or ""}
+        for r in (await db.execute(stmt)).all()
+    ]
 
 
 # ===== 集群管理 =====
