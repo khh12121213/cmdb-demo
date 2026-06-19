@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.database import get_db
 from app.services import admin_service as svc
-from app.models import EnvInfo, AppInfo, AppCluster, AppDeployGroup, ClusterInstance, CicdVariable
+from app.models import EnvInfo, SysInfo, AppInfo, AppCluster, AppDeployGroup, ClusterInstance, CicdVariable
 
 router = APIRouter(prefix="/api/v1/admin", tags=["运维管理"])
 
@@ -21,6 +21,21 @@ async def env_remove(id: int, db: AsyncSession = Depends(get_db)):
     ok = await svc.soft_delete(db, EnvInfo, id)
     return {"success": ok}
 
+# ===== 系统管理 =====
+@router.get("/sys/list")
+async def sys_list(env_code: str = "", page: int = 1, size: int = 20, db: AsyncSession = Depends(get_db)):
+    return await svc.get_sys_list(db, env_code, page, size)
+
+@router.post("/sys/save")
+async def sys_save(data: dict, db: AsyncSession = Depends(get_db)):
+    await svc.save_sys(db, data)
+    return {"success": True}
+
+@router.put("/sys/remove")
+async def sys_remove(id: int, db: AsyncSession = Depends(get_db)):
+    ok = await svc.soft_delete(db, SysInfo, id)
+    return {"success": ok}
+
 # ===== 应用管理 =====
 @router.get("/app/list")
 async def app_list(page: int = 1, size: int = 20, keyword: str = "", db: AsyncSession = Depends(get_db)):
@@ -28,7 +43,7 @@ async def app_list(page: int = 1, size: int = 20, keyword: str = "", db: AsyncSe
 
 @router.get("/app/all")
 async def app_all(db: AsyncSession = Depends(get_db)):
-    return [{"id": r.id, "app_code": r.app_code, "app_name": r.app_name, "app_type": r.app_type, "owner": r.owner} for r in await svc.get_apps_all(db)]
+    return [{"id": r.id, "app_code": r.app_code, "app_name": r.app_name, "app_type": r.app_type, "sys_id": r.sys_id, "owner": r.owner, "dev_owner": r.dev_owner, "ops_owner": r.ops_owner} for r in await svc.get_apps_all(db)]
 
 @router.post("/app/save")
 async def app_save(data: dict, db: AsyncSession = Depends(get_db)):

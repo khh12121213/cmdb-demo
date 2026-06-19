@@ -7,6 +7,7 @@ const routes = [
     redirect: '/env',
     children: [
       { path: 'env', name: 'EnvManage', component: () => import('../views/EnvManage.vue'), meta: { title: '环境管理' } },
+      { path: 'sys', name: 'SysManage', component: () => import('../views/SysManage.vue'), meta: { title: '系统管理' } },
       { path: 'app', name: 'AppManage', component: () => import('../views/AppManage.vue'), meta: { title: '应用管理' } },
       { path: 'cluster', name: 'ClusterManage', component: () => import('../views/ClusterManage.vue'), meta: { title: '集群管理' } },
       { path: 'group', name: 'GroupManage', component: () => import('../views/GroupManage.vue'), meta: { title: '部署组管理' } },

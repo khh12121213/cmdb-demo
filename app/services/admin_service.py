@@ -1,7 +1,7 @@
 from sqlalchemy import select, update, and_, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import (
-    EnvInfo, AppInfo, AppCluster, AppDeployGroup,
+    EnvInfo, SysInfo, AppInfo, AppCluster, AppDeployGroup,
     ClusterInstance, CicdVariable,
     AppDeployGroupRelease, ClusterInstanceRelease, SysAuditLog
 )
@@ -51,7 +51,7 @@ async def save_app(db: AsyncSession, data: dict) -> AppInfo:
     else:
         app = AppInfo()
         db.add(app)
-    for f in ["app_code", "app_name", "app_type", "repo_url", "artifact_repo", "owner", "proc_name", "base_jvm_opts", "log_base_dir"]:
+    for f in ["sys_id", "app_code", "app_name", "app_type", "repo_url", "artifact_repo", "owner", "dev_owner", "ops_owner", "proc_name", "base_jvm_opts", "log_base_dir"]:
         if f in data:
             setattr(app, f, data[f])
     for f in ["server_port", "management_port", "default_bk_biz_id"]:
@@ -238,6 +238,30 @@ async def get_audit_logs(db: AsyncSession, page: int = 1, size: int = 20,
     stmt = stmt.offset((page - 1) * size).limit(size)
     rows = (await db.execute(stmt)).scalars().all()
     return {"total": total, "items": [r for r in rows]}
+
+
+# ===== 系统管理 =====
+async def get_sys_list(db: AsyncSession, env_code: str = "", page: int = 1, size: int = 20) -> dict:
+    stmt = select(SysInfo).where(SysInfo.is_deleted == 0)
+    if env_code:
+        stmt = stmt.where(SysInfo.env_code == env_code)
+    count_stmt = select(func.count()).select_from(stmt.subquery())
+    total = (await db.execute(count_stmt)).scalar()
+    stmt = stmt.offset((page - 1) * size).limit(size)
+    rows = (await db.execute(stmt)).scalars().all()
+    return {"total": total, "items": [r for r in rows]}
+
+
+async def save_sys(db: AsyncSession, data: dict) -> SysInfo:
+    if data.get("id"):
+        s = (await db.execute(select(SysInfo).where(SysInfo.id == data["id"]))).scalar_one_or_none()
+    else:
+        s = SysInfo()
+        db.add(s)
+    for f in ["sys_code", "sys_name", "env_code", "dev_owner", "ops_owner", "remark"]:
+        if f in data:
+            setattr(s, f, data[f])
+    return s
 
 
 # ===== 逻辑删除通用 =====

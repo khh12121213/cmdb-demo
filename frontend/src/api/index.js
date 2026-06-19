@@ -22,6 +22,13 @@ export const envApi = {
   remove: (id) => api.put('/admin/env/remove', { id }),
 }
 
+// ===== 系统 =====
+export const sysApi = {
+  list: (params) => api.get('/admin/sys/list', { params }),
+  save: (data) => api.post('/admin/sys/save', data),
+  remove: (id) => api.put('/admin/sys/remove', { id }),
+}
+
 // ===== 应用 =====
 export const appApi = {
   list: (params) => api.get('/admin/app/list', { params }),

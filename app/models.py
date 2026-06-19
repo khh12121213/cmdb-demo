@@ -19,11 +19,14 @@ class AppInfo(Base):
     __tablename__ = "app_info"
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     app_code = Column(String(64), nullable=False, comment="应用唯一编码")
+    sys_id = Column(BigInteger, default=0, comment="归属系统ID")
     app_name = Column(String(128), nullable=False, comment="应用名称")
     app_type = Column(String(32), nullable=False, comment="类型: springboot/nginx/tongweb/weblogic/tsf-service")
     repo_url = Column(String(255), default="")
     artifact_repo = Column(String(255), default="")
     owner = Column(String(64), default="", comment="应用负责人")
+    dev_owner = Column(String(64), default="", comment="研发负责人")
+    ops_owner = Column(String(64), default="", comment="运维负责人")
     server_port = Column(Integer, default=0)
     management_port = Column(Integer, default=0)
     proc_name = Column(String(128), default="")
@@ -31,6 +34,18 @@ class AppInfo(Base):
     log_base_dir = Column(String(255), default="")
     default_bk_biz_id = Column(BigInteger, default=0, comment="默认蓝鲸业务ID")
     is_deleted = Column(Integer, default=0)
+
+
+class SysInfo(Base):
+    __tablename__ = "sys_info"
+    id = Column(BigInteger, primary_key=True, autoincrement=True, comment="主键")
+    sys_code = Column(String(64), nullable=False, comment="系统唯一编码")
+    sys_name = Column(String(128), nullable=False, comment="系统名称")
+    env_code = Column(String(32), nullable=False, comment="所属环境")
+    dev_owner = Column(String(64), default="", comment="研发负责人")
+    ops_owner = Column(String(64), default="", comment="运维负责人")
+    remark = Column(String(255), default="", comment="备注")
+    is_deleted = Column(Integer, default=0, comment="0正常 1删除")
 
 
 class AppCluster(Base):
