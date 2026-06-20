@@ -8,17 +8,23 @@ from app.models import (
 
 
 # ===== 环境管理 =====
-async def get_envs(db: AsyncSession, page: int = 1, size: int = 20, tags: str = "") -> dict:
+async def get_envs(db: AsyncSession, page: int = 1, size: int = 20, tags: str = "", keyword: str = "") -> dict:
     stmt = select(EnvInfo).where(EnvInfo.is_deleted == 0)
     if tags:
         stmt = stmt.where(EnvInfo.env_tags.contains(tags))
-    # count
+    if keyword:
+        stmt = stmt.where(EnvInfo.env_name.contains(keyword) | EnvInfo.env_code.contains(keyword))
     count_stmt = select(func.count()).select_from(stmt.subquery())
     total = (await db.execute(count_stmt)).scalar()
-    # page
     stmt = stmt.offset((page - 1) * size).limit(size)
     rows = (await db.execute(stmt)).scalars().all()
     return {"total": total, "items": [r for r in rows]}
+
+
+async def get_envs_all(db: AsyncSession) -> list[EnvInfo]:
+    stmt = select(EnvInfo).where(EnvInfo.is_deleted == 0)
+    rows = (await db.execute(stmt)).scalars().all()
+    return rows
 
 
 async def save_env(db: AsyncSession, data: dict) -> EnvInfo:

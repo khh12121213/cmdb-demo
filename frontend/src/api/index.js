@@ -18,6 +18,7 @@ api.interceptors.response.use(
 // ===== 环境 =====
 export const envApi = {
   list: (params) => api.get('/admin/env/list', { params }),
+  all: () => api.get('/admin/env/all'),
   save: (data) => api.post('/admin/env/save', data),
   remove: (id) => api.put('/admin/env/remove', { id }),
 }

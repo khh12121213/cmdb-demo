@@ -8,8 +8,12 @@ router = APIRouter(prefix="/api/v1/admin", tags=["运维管理"])
 
 # ===== 环境管理 =====
 @router.get("/env/list")
-async def env_list(page: int = 1, size: int = 20, tags: str = "", db: AsyncSession = Depends(get_db)):
-    return await svc.get_envs(db, page, size, tags)
+async def env_list(page: int = 1, size: int = 20, tags: str = "", keyword: str = "", db: AsyncSession = Depends(get_db)):
+    return await svc.get_envs(db, page, size, tags, keyword)
+
+@router.get("/env/all")
+async def env_all(db: AsyncSession = Depends(get_db)):
+    return await svc.get_envs_all(db)
 
 @router.post("/env/save")
 async def env_save(data: dict, db: AsyncSession = Depends(get_db)):

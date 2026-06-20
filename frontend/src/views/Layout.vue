@@ -12,10 +12,10 @@
         router
       >
         <el-menu-item index="/env"><el-icon><Setting /></el-icon> 环境管理</el-menu-item>
-        <el-menu-item index="/sys"><el-icon><Menu /></el-icon> 系统管理</el-menu-item>
+        <el-menu-item index="/sys"><el-icon><Menu /></el-icon> 业务系统</el-menu-item>
         <el-menu-item index="/app"><el-icon><Grid /></el-icon> 应用管理</el-menu-item>
-        <el-menu-item index="/cluster"><el-icon><Connection /></el-icon> 集群管理</el-menu-item>
-        <el-menu-item index="/group"><el-icon><Operation /></el-icon> 部署组管理</el-menu-item>
+        <el-menu-item index="/cluster"><el-icon><Connection /></el-icon> 应用集群</el-menu-item>
+        <el-menu-item index="/group"><el-icon><Operation /></el-icon> 部署分组</el-menu-item>
         <el-menu-item index="/instance"><el-icon><Monitor /></el-icon> 主机实例</el-menu-item>
         <el-menu-item index="/variable"><el-icon><Key /></el-icon> 变量配置</el-menu-item>
         <el-menu-item index="/release"><el-icon><Finished /></el-icon> 发布基线</el-menu-item>

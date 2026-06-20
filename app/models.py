@@ -59,6 +59,7 @@ class AppCluster(Base):
     namespace = Column(String(64), default="")
     labels = Column(String(512), default="", comment="灰度发布标签")
     status = Column(Integer, default=1, comment="1允许发布 0禁用投产")
+    container_platform = Column(String(32), default="", comment="容器平台，仅elastic生效：tsf/tke/docker")
     is_deleted = Column(Integer, default=0)
 
 
@@ -104,6 +105,11 @@ class AppDeployGroup(Base):
     lock_status = Column(Integer, default=0, comment="0空闲 1发布中")
     lock_trace_id = Column(String(128), default="")
     lock_expire_time = Column(DateTime, nullable=True)
+
+    # 容器/镜像字段
+    image_repo = Column(String(255), default="", comment="镜像仓库地址(TKE/Docker/TSF容器共用)")
+    image_name = Column(String(255), default="", comment="镜像名称")
+    artifact_id = Column(String(128), default="", comment="TSF CVM虚拟机软件包唯一ID")
 
     is_deleted = Column(Integer, default=0)
 
